@@ -1,5 +1,5 @@
 """
-dashboard.py  ──  House Price Prediction Dashboard
+dashboard.py  ──  HomeValue AI Dashboard
 Run with:  streamlit run dashboard.py
 """
 
@@ -28,44 +28,133 @@ from sklearn.pipeline import Pipeline
 # ─────────────────────────────────────────────
 #  Page config
 # ─────────────────────────────────────────────
-st.set_page_config(
-    page_title="House Price Predictor",
-    page_icon="🏠",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-# ─────────────────────────────────────────────
-#  Custom CSS
-# ─────────────────────────────────────────────
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 2.4rem; font-weight: 700; color: #1f3c88;
-        text-align: center; margin-bottom: 0.2rem;
-    }
-    .sub-header {
-        font-size: 1.05rem; color: #555; text-align: center; margin-bottom: 1.5rem;
-    }
-    .metric-card {
-        background: linear-gradient(135deg, #1f3c88 0%, #4a90d9 100%);
-        border-radius: 12px; padding: 18px 24px; color: white; margin: 6px 0;
-    }
-    .metric-card h3 { margin: 0; font-size: 0.85rem; opacity: 0.85; }
-    .metric-card h1 { margin: 4px 0 0; font-size: 1.9rem; }
-    .predict-box {
-        background: #f0f7ff; border: 2px solid #4a90d9;
-        border-radius: 12px; padding: 20px; text-align: center;
-    }
-    .predict-price {
-        font-size: 2.8rem; font-weight: 800; color: #1f3c88;
-    }
-    .tag { background:#e8f0fe; color:#1a73e8; border-radius:20px;
-           padding:3px 10px; font-size:0.78rem; margin:2px; display:inline-block; }
-    div[data-testid="stSidebar"] { background: #f8f9ff; }
+
+.stApp {
+    background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 50%, #f7f9fc 100%);
+}
+
+/* Main container */
+.block-container {
+    max-width: 1400px;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+/* Main headings */
+.main-header {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #172554;
+    text-align: center;
+    margin-bottom: 0.3rem;
+}
+
+.sub-header {
+    font-size: 1.05rem;
+    color: #64748b;
+    text-align: center;
+    margin-bottom: 1.8rem;
+}
+
+/* Sidebar */
+div[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #eef4ff 0%, #f8fbff 100%);
+    border-right: 1px solid #dbe5f1;
+}
+
+div[data-testid="stSidebar"] h2 {
+    color: #172554;
+}
+
+/* Metric cards */
+.metric-card {
+    background: linear-gradient(135deg, #172554 0%, #2563eb 100%);
+    border-radius: 16px;
+    padding: 18px 22px;
+    color: white;
+    margin: 6px 0;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.16);
+}
+
+.metric-card h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.metric-card h1 {
+    margin: 4px 0 0;
+    font-size: 1.9rem;
+}
+
+/* Prediction result */
+.predict-box {
+    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+    border: 2px solid #60a5fa;
+    border-radius: 18px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.10);
+}
+
+.predict-price {
+    font-size: 3rem;
+    font-weight: 850;
+    color: #172554;
+    margin: 8px 0;
+}
+
+/* Tags */
+.tag {
+    background: #e8f0fe;
+    color: #1d4ed8;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    margin: 3px;
+    display: inline-block;
+    border: 1px solid #dbeafe;
+}
+
+/* Buttons */
+.stButton > button {
+    border-radius: 12px;
+    font-weight: 700;
+    padding: 0.65rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.18);
+}
+
+/* Inputs */
+div[data-baseweb="select"] > div,
+div[data-baseweb="input"] > div {
+    border-radius: 10px;
+}
+
+/* Tabs */
+button[data-baseweb="tab"] {
+    font-weight: 600;
+}
+
+/* Dataframes */
+div[data-testid="stDataFrame"] {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Horizontal divider */
+hr {
+    border-color: #dbe5f1;
+}
+
 </style>
 """, unsafe_allow_html=True)
-
 
 # ─────────────────────────────────────────────
 #  Data + Model caching
@@ -129,8 +218,7 @@ FOUNDATIONS   = sorted(df["Foundation"].unique().tolist())
 #  Sidebar
 # ─────────────────────────────────────────────
 with st.sidebar:
-    st.image("https://img.icons8.com/color/96/house--v1.png", width=64)
-    st.markdown("## 🏠 House Price Predictor")
+    st.markdown("## 🏠 HomeValue AI")
     st.markdown("---")
     page = st.radio("Navigate", [
         "🏠 Predict Price",
@@ -150,8 +238,11 @@ with st.sidebar:
 #  PAGE 1: Predict Price
 # ═══════════════════════════════════════════════════════════════════════════════
 if page == "🏠 Predict Price":
-    st.markdown('<div class="main-header">🏠 House Price Predictor</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Enter property details to get an instant ML-powered price estimate</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">🏠 HomeValue AI</div>', unsafe_allow_html=True)
+    st.markdown(
+    '<div class="sub-header">Get an instant ML-powered estimate for your property</div>',
+    unsafe_allow_html=True
+)   
 
     # Model selector
     col_sel, _ = st.columns([2, 3])
@@ -548,45 +639,117 @@ elif page == "📋 Dataset Preview":
 #  PAGE 6: About
 # ═══════════════════════════════════════════════════════════════════════════════
 elif page == "ℹ️ About Project":
-    st.markdown('<div class="main-header">ℹ️ About This Project</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="main-header">🏠 About HomeValue AI</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="sub-header">'
+        'A machine learning application for house price estimation and analysis'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
     st.markdown("""
-    ## 🏠 House Price Prediction using Regression Models
+    ## 🎯 About the Project
 
-    This end-to-end machine learning project predicts residential property prices from 
-    structural, locational, and quality features. It is designed as a **portfolio project** 
-    demonstrating full ML workflow from data to deployment.
+    **HomeValue AI** is an end-to-end machine learning application
+    that estimates residential property prices using structural,
+    quality, and location-based features.
+
+    The project combines data preprocessing, feature engineering,
+    regression model training, model comparison, and an interactive
+    Streamlit dashboard in a single workflow.
 
     ---
 
-    ### 🎯 Problem Statement
-    Manually pricing properties is slow, subjective, and inconsistent. ML-powered Automated 
-    Valuation Models (AVMs) allow real estate portals, banks, and investors to generate 
-    accurate, instant price estimates at scale.
+    ### 🧠 Machine Learning Workflow
 
-    ### 🏗️ Architecture
-    ```
-    Synthetic Data → Preprocessing → Feature Engineering 
-        → Regression Models → Evaluation → Streamlit Dashboard
+    ```text
+    Housing Data
+         ↓
+    Data Preprocessing
+         ↓
+    Feature Engineering
+         ↓
+    Regression Models
+         ↓
+    Model Evaluation
+         ↓
+    Price Prediction
+         ↓
+    Streamlit Dashboard
     ```
 
     ### 🤖 Models Used
-    | Model | Type | Notes |
-    |---|---|---|
-    | Linear Regression | Parametric | Baseline, interpretable |
-    | Ridge Regression | Regularized Linear | Handles multicollinearity |
-    | Decision Tree | Tree | Non-linear, explainable |
-    | Random Forest | Ensemble (Bagging) | Best accuracy + robustness |
-    | Gradient Boosting | Ensemble (Boosting) | High accuracy |
+
+    | Model | Purpose |
+    |---|---|
+    | Linear Regression | Baseline regression model |
+    | Ridge Regression | Regularized linear regression |
+    | Decision Tree | Non-linear regression |
+    | Random Forest | Ensemble regression |
+    | Gradient Boosting | Boosting-based regression |
 
     ### 📊 Evaluation Metrics
-    - **MAE** (Mean Absolute Error) — average prediction error in ₹
-    - **RMSE** (Root Mean Squared Error) — penalizes large errors  
-    - **R²** (R-Squared) — % variance explained by the model
+
+    - **MAE** — Mean Absolute Error
+    - **RMSE** — Root Mean Squared Error
+    - **R² Score** — Measures explained variance
 
     ### 🛠️ Tech Stack
     """)
 
+    tags = [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "Matplotlib",
+        "Seaborn",
+        "Streamlit",
+        "Joblib"
+    ]
+
+    st.markdown(
+        " ".join(
+            [f'<span class="tag">{t}</span>' for t in tags]
+        ),
+        unsafe_allow_html=True
+    )
+
+    st.markdown("""
+    ---
+
+    ### 🌍 Potential Applications
+
+    - Real estate price estimation
+    - Property valuation support
+    - Housing market analysis
+    - What-if property analysis
+
+    ### 📁 Project Structure
+
+    ```text
+    HomeValue-AI/
+    ├── data/
+    ├── src/
+    ├── models/
+    ├── images/
+    ├── notebooks/
+    ├── dashboard.py
+    ├── main.py
+    ├── requirements.txt
+    └── README.md
+    ```
+
+    ### 👨‍💻 Project
+
+    **HomeValue AI — House Price Prediction**
+
+    Built with Python, Machine Learning, and Streamlit.
+    """)
     tags = ["Python 3.x", "Pandas", "NumPy", "Scikit-learn", "Matplotlib",
             "Seaborn", "Streamlit", "Joblib"]
     st.markdown(" ".join([f'<span class="tag">{t}</span>' for t in tags]), unsafe_allow_html=True)
