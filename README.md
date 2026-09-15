@@ -1,4 +1,7 @@
 # 🏠 House Price Prediction using Regression Models
+## 🚀 Live Demo
+
+👉 [Try HomeValue AI Live](https://homevalue-ai-sanyam.streamlit.app/)
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.2+-orange?style=flat-square)
